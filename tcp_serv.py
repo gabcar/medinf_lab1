@@ -1,6 +1,7 @@
 import socket
 import matplotlib.pyplot as plt
 import re
+import numpy as np
 
 TCP_IP = '127.0.0.1'
 TCP_PORT = 5005
@@ -37,28 +38,50 @@ bpm = []
 time = []
 order = []
 
-
+# split string
 for line in test:
     split_line = line.replace('u','').replace('\'','').replace(',','').replace(')','').replace('(','')
     split_line = split_line.split(' ')
     if len(split_line)>1:
-        print split_line
+        #print split_line
         signal.append(split_line[0])
         mean.append(split_line[1])
         bpm.append(split_line[2])
         time.append(split_line[3])
         order.append(split_line[4])
 
-end_of_time=len(time)
-plt.figure()
+#plot stuff
+plt.ion()
+fig = plt.figure()
+window_size = 100
 
-plt.plot(time[end_of_time-200:end_of_time-1],signal[end_of_time-200:end_of_time-1])
-plt.plot(time[end_of_time-200:end_of_time-1],mean[end_of_time-200:end_of_time-1])
-plt.title(bpm[end_of_time-1])
-plt.show()
+h1 = plt.plot([],[])
+
+ax = fig.add_subplot(111)
+signal_window= np.array(signal[0:window_size])
+time_window = np.array(time[0:window_size])
+mean_window = np.array(mean[0:window_size])
+
+line1, = ax.plot(time_window, signal_window, 'b-')
+line2, = ax.plot(time_window, mean_window, 'r-')
 
 
 
-#print test
-print len(test)
-print test[0]
+
+for idx in range(len(time)):
+    line1.set_ydata(signal[idx:idx+window_size])
+    line2.set_ydata(mean[idx:idx+window_size])
+    #line1.set_xdata(time[idx:idx+window_size])
+    #line2.set_xdata(time[idx:idx+window_size])
+    
+    plt.title('bpm: ' + bpm[idx])
+
+    #ax1 = plt.gca()
+    # recompute the ax.dataLim
+    ax.relim()
+    # update ax.viewLim using the new dataLim
+    ax.autoscale_view()
+    plt.draw()
+
+    fig.canvas.draw()
+    plt.pause(0.02)
