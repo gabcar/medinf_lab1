@@ -56,6 +56,8 @@ fig = plt.figure()
 window_size = 100
 
 h1 = plt.plot([],[])
+time[:] = [float(a) for a in time]
+time[:] = [x-float(min(time)) for x in time]
 
 ax = fig.add_subplot(111)
 signal_window= np.array(signal[0:window_size])
@@ -65,22 +67,20 @@ mean_window = np.array(mean[0:window_size])
 line1, = ax.plot(time_window, signal_window, 'b-')
 line2, = ax.plot(time_window, mean_window, 'r-')
 
-
-
-
 for idx in range(len(time)):
     line1.set_ydata(signal[idx:idx+window_size])
     line2.set_ydata(mean[idx:idx+window_size])
-    #line1.set_xdata(time[idx:idx+window_size])
-    #line2.set_xdata(time[idx:idx+window_size])
-    
+    line1.set_xdata(time[idx:idx+window_size])
+    line2.set_xdata(time[idx:idx+window_size])
+
     plt.title('bpm: ' + bpm[idx])
 
     #ax1 = plt.gca()
     # recompute the ax.dataLim
     ax.relim()
     # update ax.viewLim using the new dataLim
-    ax.autoscale_view()
+    ax.set_autoscale_on(1)
+    ax.set_xlim(time[idx],time[idx+window_size])
     plt.draw()
 
     fig.canvas.draw()
