@@ -58,31 +58,35 @@ class tcp_server(object):
         window_size = 100
 
         h1 = plt.plot([],[])
-         #convert to float
-
         ax = fig.add_subplot(111)
-        signal_window= np.array(self.signal[0:window_size])
-        time_window = np.array(self.time[0:window_size])
-        mean_window = np.array(self.mean[0:window_size])
 
-        line1, = ax.plot(time_window, signal_window, 'b-')
-        line2, = ax.plot(time_window, mean_window, 'r-')
+        line1, = ax.plot(self.time[0:window_size], self.signal[0:window_size], 'b-')
+        line2, = ax.plot(self.time[0:window_size], self.mean[0:window_size], 'r-')
 
-        for idx in range(len(self.time)):
-            line1.set_ydata(self.signal[idx:idx+window_size])
-            line2.set_ydata(self.mean[idx:idx+window_size])
-            line1.set_xdata(self.time[idx:idx+window_size])
-            line2.set_xdata(self.time[idx:idx+window_size])
+        while len(self.signal)!=0:
+            line1.set_ydata(self.signal[0:window_size])
+            line2.set_ydata(self.mean[0:window_size])
+            line1.set_xdata(self.time[0:window_size])
+            line2.set_xdata(self.time[0:window_size])
 
             # recompute the ax.dataLim
             ax.relim()
             # update ax.viewLim using the new dataLim
             ax.set_autoscaley_on(1)
-            ax.set_xlim(self.time[idx],self.time[idx+window_size])
+            ax.set_xlim(self.time[0],self.time[window_size])
             plt.draw()
 
             fig.canvas.draw()
             plt.pause(0.02)
+            print len(self.signal)
+            self.signal.pop(0)
+            print len(self.signal)
+            self.mean.pop(0)
+            self.time.pop(0)
+            print self.signal[0]
+
+            if len(self.time)<window_size:
+                self.getConnnection()
 
 if __name__ == '__main__':
     s = tcp_server()
