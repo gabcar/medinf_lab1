@@ -15,7 +15,7 @@ class MyServer(object):
         self.time = []
         self.bpm = []
         self.totalPackages = 0
-        
+
     def getConnection(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.bind((TCP_IP, TCP_PORT))
@@ -30,9 +30,9 @@ class MyServer(object):
             no_of_packages +=1
             packages.append(data)
         conn.close()
-        
+
         self.totalPackages = ''.join(packages)
-    
+
     def splitData(self):
         splitPackages = self.totalPackages.split('\n')
         self.totalPackages = 0
@@ -46,21 +46,21 @@ class MyServer(object):
                 self.mean.append(splitLine[1])
                 self.bpm.append(splitLine[2])
                 self.time.append(splitLine[3])
-                order.append(splitLine[4]) #behövs denna?
-        
+                order.append(splitLine[4]) #behvs denna?
+
     def plotData(self):
         plt.ion()
         fig = plt.figure()
         window_size = 100
-         
+
         h1 = plt.plot([],[])
         self.time[:] = [float(a) for a in time]
         self.time[:] = [x-float(min(time)) for x in time]
-         
+
         ax = fig.add_subplot(111)
         signalLine, = ax.plot(self.time[0:window_size], self.signal[0:window_size], 'b-')
         meanLine, = ax.plot(self.time[0:window_size], self.mean[0:window_size], 'r-')
-     
+
         for idx in range(len(time)):
             signalLine.set_data(self.time[idx:idx+window_size], self.signal[idx:idx+window_size])
             meanLine.set_data(self.time[idx:idx+window_size], self.mean[idx:idx+window_size])
@@ -71,7 +71,10 @@ class MyServer(object):
             ax.set_autoscale_on(1)
             ax.set_xlim(self.time[idx],time[idx+window_size])
             plt.draw()
-         
+
             fig.canvas.draw()
             plt.pause(0.02)
-            
+
+if __name__ == '__main__':
+    s = MyServer()
+    s.getConnection()
