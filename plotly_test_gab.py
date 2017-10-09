@@ -58,6 +58,10 @@ while(True):
         data = MESSAGES.read()
         data = data.split('\n')
 
+        signal =[]
+        mean = []
+        bpm = []
+        time = []
         for line in data:
             split_line = line.replace('u','').replace('\'','').replace(',','').replace(')','').replace('(','')
             split_line = split_line.split(' ')
