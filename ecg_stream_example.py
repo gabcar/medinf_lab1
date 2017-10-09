@@ -12,27 +12,27 @@ stream_ids = tls.get_credentials_file()['stream_ids']
 print stream_ids
 
 class onlineEcg(object):
-    
+
     def __init__(self):
         self.signal = []
         self.mean = []
         self.bpm = []
         self.ecgTime = []
-        
+
     def appendData(self):
         prev_time = 0
-        
+
         if len(sys.argv)>1:
             file_path = sys.argv[1]
         else:
             file_path = "short_pulse.txt"
-        
-        
+
+
         MESSAGES = open(file_path,"r")
         data = MESSAGES.read()
         data = data.split('\n')
-        
-        
+
+
         for line in data:
             split_line = line.replace('u','').replace('\'','').replace(',','').replace(')','').replace('(','')
             split_line = split_line.split(' ')
@@ -45,14 +45,14 @@ class onlineEcg(object):
         self.ecgTime[:] = [float(a) for a in self.ecgTime]
         self.ecgTime[:] = [x-float(min(self.ecgTime)) for x in self.ecgTime]
         self.ecgTime[:] = [str(a) for a in self.ecgTime]
-        
+
         data_dict = {'self.signal' : self.signal, 'self.mean' : self.mean, 'bpm' : self.bpm, 'time' : self.ecgTime}
-    
+
     def ecgStream(self):
         stream_1 = dict(token=stream_ids[0], maxpoints=80)
         stream_2 = dict(token=stream_ids[1], maxpoints=80)
-        
-        
+
+
         # Initialize trace of streaming plot by embedding the unique stream_id
         trace1 = go.Scatter(
             x=[],
@@ -66,20 +66,20 @@ class onlineEcg(object):
             mode='lines',
             stream=stream_2
         )
-        
+
         plotData = [trace1, trace2]
-        
-        
-        
+
+
+
         # Add title to layout object
         layout = go.Layout(title='Pulse curve')
-        
+
         # Make a figure object
         fig = go.Figure(data=plotData, layout=layout)
-        
+
         # Send fig to Plotly, initialize streaming plot, open new tab
         py.plot(fig, filename='python-streaming')
-        
+
         # We will provide the stream link object the same token that's associated with the trace we wish to stream to
         s1 = py.Stream(stream_ids[0])
         s2 = py.Stream(stream_ids[1])
@@ -100,10 +100,10 @@ class onlineEcg(object):
             print i
             print len(self.ecgTime), len(self.signal), len(self.mean)
             i += 1
-            time.sleep(0.5)  # plot a point every second    
+            time.sleep(0.05)  # plot a point every second    
         # Close the stream when done plotting
         s.close()
-        
+
 if __name__ == "__main__":
     test = onlineEcg()
     test.appendData()
