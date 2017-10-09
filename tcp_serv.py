@@ -77,13 +77,11 @@ class tcp_server(object):
             plt.draw()
 
             fig.canvas.draw()
-            plt.pause(0.02)
-            print len(self.signal)
+            plt.pause(self.time[1]-self.time[0])
+
             self.signal.pop(0)
-            print len(self.signal)
             self.mean.pop(0)
             self.time.pop(0)
-            print self.signal[0]
 
             if len(self.time)<window_size:
                 self.getConnnection()

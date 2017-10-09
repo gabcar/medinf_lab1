@@ -100,7 +100,7 @@ class onlineEcg(object):
             print i
             print len(self.ecgTime), len(self.signal), len(self.mean)
             i += 1
-            time.sleep(0.05)  # plot a point every second    
+            time.sleep(0.02)  # plot a point every second    
         # Close the stream when done plotting
         s.close()
 

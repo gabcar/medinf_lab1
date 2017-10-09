@@ -1,6 +1,7 @@
 import os
 import sys
 import numpy as np
+import time
 
 def chunkIt(seq, num):
     avg = len(seq) / float(num)
