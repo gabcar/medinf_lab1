@@ -49,4 +49,4 @@ for num,i in enumerate(idxs):
         f.write(str(line) + '\n')
     temp = i
     f.close()
-    t.sleep(10)
+    t.sleep(5)
