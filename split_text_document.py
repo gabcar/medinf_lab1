@@ -1,7 +1,7 @@
 import os
 import sys
 import numpy as np
-import time
+import time as t
 
 def chunkIt(seq, num):
     avg = len(seq) / float(num)
@@ -18,6 +18,7 @@ file_path = "example_pulse.txt"
 f = open(file_path,"r")
 data = f.read()
 data = data.split('\n')
+f.close()
 
 idxs = []
 time = []
@@ -31,7 +32,6 @@ for line in data:
 time[:] = [float(a) for a in time]
 time[:] = [x-float(min(time)) for x in time]
 
-
 temp =0
 for i,times in enumerate(time):
     if times - temp > 5:
@@ -44,8 +44,9 @@ for i in idxs:
 
 temp = 0
 for num,i in enumerate(idxs):
-    f = open("data_set_" + str(num) + ".txt","w")
+    f = open("ecg_data.txt","w")
     for line in data[temp:i]:
         f.write(str(line) + '\n')
     temp = i
     f.close()
+    t.sleep(10)
