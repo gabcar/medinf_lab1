@@ -25,8 +25,7 @@ class onlineEcg(object):
         if len(sys.argv)>1:
             file_path = sys.argv[1]
         else:
-            file_path = "short_pulse.txt"
-
+            file_path = "example_pulse.txt"
 
         MESSAGES = open(file_path,"r")
         data = MESSAGES.read()
@@ -45,12 +44,11 @@ class onlineEcg(object):
         self.ecgTime[:] = [float(a) for a in self.ecgTime]
         self.ecgTime[:] = [x-float(min(self.ecgTime)) for x in self.ecgTime]
         self.ecgTime[:] = [str(a) for a in self.ecgTime]
-
         data_dict = {'self.signal' : self.signal, 'self.mean' : self.mean, 'bpm' : self.bpm, 'time' : self.ecgTime}
 
     def ecgStream(self):
-        stream_1 = dict(token=stream_ids[0], maxpoints=80)
-        stream_2 = dict(token=stream_ids[1], maxpoints=80)
+        stream_1 = dict(token=stream_ids[0], maxpoints=150)
+        stream_2 = dict(token=stream_ids[1], maxpoints=150)
 
 
         # Initialize trace of streaming plot by embedding the unique stream_id
@@ -72,14 +70,14 @@ class onlineEcg(object):
 
 
         # Add title to layout object
-        layout = go.Layout(title='Pulse curve')
+        self.layout = go.Layout(title='BPM:')
 
         # Make a figure object
-        fig = go.Figure(data=plotData, layout=layout)
+        fig = go.Figure(data=plotData, layout=self.layout)
 
         # Send fig to Plotly, initialize streaming plot, open new tab
         py.plot(fig, filename='python-streaming')
-
+        
         # We will provide the stream link object the same token that's associated with the trace we wish to stream to
         s1 = py.Stream(stream_ids[0])
         s2 = py.Stream(stream_ids[1])
@@ -89,18 +87,19 @@ class onlineEcg(object):
         # Delay start of stream by 5 sec (time to switch tabs)
         time.sleep(5)
         i = 0
-        print len(self.signal)
         while True:
-            if len(self.signal) < 10:
-                self.appendData()
+            #===================================================================
+            # if len(self.signal) < 10:
+            #     self.appendData()
+            #===================================================================
             # Send data to your plot
-            s1.write(dict(x=i, y=self.signal[0]))
-            s2.write(dict(x=i, y=self.mean[0]))
-            del self.signal[0], self.mean[0]
+            s1.write(dict(x=self.ecgTime[0], y=self.signal[0]), dict(title="BPM: {0}".format(self.bpm[0])))
+            s2.write(dict(x=self.ecgTime[0], y=self.mean[0]))
+            del self.signal[0], self.mean[0], self.ecgTime[0], self.bpm[0]
             print i
             print len(self.ecgTime), len(self.signal), len(self.mean)
             i += 1
-            time.sleep(0.02)  # plot a point every second    
+            time.sleep(0.2)  # plot a point every second    
         # Close the stream when done plotting
         s.close()
 
