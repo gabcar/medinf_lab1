@@ -92,8 +92,6 @@ def ecgStream():
             time[:] = [float(a) for a in time]
             time[:] = [x-time_offset for x in time]
             time[:] = [str(a) for a in time]
-            print time[0:5]
-            print data[0:5]
             bpm[-1] = random.randint(50,120)
             s1.write(dict(x=time, y=signal),dict(title='bpm: '+str(bpm[-1])))
             s2.write(dict(x=time, y=mean))
